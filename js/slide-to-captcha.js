@@ -1,87 +1,135 @@
-(function($) {
-    $.fn.slideToCAPTCHA = function(options) {
-        options = $.extend({
+/*
+ * Require jQuery
+ */
+var SliderCaptcha = function(element, options) {
+    // Object Composition
+    this.data = {
+        options: $.extend({
             handle: '.handle',
             cursor: 'move',
             direction: 'x', //x or y
             customValidation: false,
             completedText: 'Done!'
-        }, options);
+        }, options),
+        handle: {
+            obj: 0,
+            active: 0,
+            OWidth: 0
+        },
+        slide: {
+            obj: $(element),
+            XPos: 0,
+            Width: 0,
+            OWidth: 0
+        },
+        form: 0,
+        mouse: {
+            xPos: 0,
+            yPos: 0
+        }
+    };
 
-        var $handle = this.find(options.handle),
-            $slide = this,
-            handleOWidth,
-            xPos,
-            yPos,
-            slideXPos,
-            slideWidth,
-            slideOWidth,
-            $activeHandle,
-            $formEl = $slide.parents('form');
+    // Object data alias
+    this.options = this.data.options;
+    this.handle = this.data.handle;
+    this.slide = this.data.slide;
+    this.form = this.data.form;
+    this.mouse = this.data.mouse;
 
-        startSlider();
+    this.init = function () {
+        // Init data
+        this.slide.obj = $(element);
+        this.slide.obj.addClass('slide-to-captcha');
+        this.slide.Width = this.slide.obj.width();
+        this.slide.OWidth = this.slide.obj.outerWidth();
 
-        $handle.css('cursor', options.cursor)
-            .on('mousedown', function(e){ slideOn(e); });
+        this.handle.obj = $(element).find(this.options.handle);
+        this.handle.obj.addClass('slide-to-captcha-handle');
+        this.handle.OWidth = this.handle.obj.outerWidth();
 
-        function startSlider() {
-            $formEl.attr('data-valid', 'false');
+        this.form = this.slide.obj.parents('form');
+        this.form.attr('data-valid', 'false');
 
-            if(options.customValidation === false) {
-                $formEl.attr('onsubmit', "return $(this).attr('data-valid') === 'true';");
+        // if(this.options.customValidation === false) {
+        //     form.attr('onsubmit', "return $(this).attr('data-valid') === 'true';");
+        // }
+
+        this.handle.obj.css('cursor', this.options.cursor)
+            .on('mousedown', this, this.onDrag);
+    };
+
+    this.destroy = function () {
+        this.form.removeAttr('data-valid', 'false');
+        this.slide.removeClass('slide-to-captcha');
+        this.handle.removeClass('slide-to-captcha-handle');
+
+        this.handle.css('cursor', 'normal')
+            .on('mousedown', null);
+
+        this.handle.active.offset({left: this.slideXPos});
+    };
+
+    this.reset = function () {
+        this.destroy();
+        this.init();
+    };
+
+    this.onDrag = function (e) {
+        var data = e.data;
+
+        data.handle.active = $(this).addClass('active-handle');
+
+        data.mouse.xPos = $(this).offset().left + data.handle.OWidth - e.pageX;
+
+        // if(data.options.direction === 'y') {
+        //    yPos = handle.offset().top + handleHeight = e.pageY;
+        // }
+
+        data.slide.XPos = $(this).parent().offset().left + ((data.slide.OWidth - data.slide.Width) / 2);
+
+        data.handle.active.on('mousemove', data, data.onMove)
+            .on('mouseup', data, data.onRelease);
+
+        e.preventDefault();
+    };
+
+    this.onMove = function (e) {
+        var data = e.data;
+        console.log('%o', data.slide);
+        console.log('%o', data.handle);
+
+        var handleXPos = e.pageX + data.mouse.xPos - data.handle.OWidth;
+        console.log("hand-x : %i", handleXPos);
+        if(handleXPos > data.slide.XPos && handleXPos < (data.slide.XPos + data.slide.Width - data.handle.OWidth)) {
+            if (data.handle.obj.hasClass('active-handle')) {
+                $('.active-handle').offset({left: handleXPos});
             }
-
-            $slide.addClass('slide-to-captcha');
-            $handle.addClass('slide-to-captcha-handle');
-            
-            handleOWidth = $handle.outerWidth();
-            slideWidth = $slide.width();
-            slideOWidth = $slide.outerWidth();
-        }
-
-        function slideOn(e) {
-            $activeHandle = $handle.addClass('active-handle');
-
-            xPos = $handle.offset().left + handleOWidth - e.pageX;
-
-            //if(options.direction === 'y') {
-            //    yPos = $handle.offset().top + handleHeight = e.pageY;
-            //}
-            slideXPos = $slide.offset().left + ((slideOWidth - slideWidth) / 2);
-
-            $activeHandle.on('mousemove', function(e){ slideMove(e); })
-                .on('mouseup', function(e){ slideOff(); });
-
-            e.preventDefault();
-        }
-
-        function slideMove(e) {
-            var handleXPos = e.pageX + xPos - handleOWidth;
-            if(handleXPos > slideXPos && handleXPos < slideXPos + slideWidth - handleOWidth) {
-                if ($handle.hasClass('active-handle')) {
-                    $('.active-handle').offset({left: handleXPos});
-                }
-            } else {
-                if(handleXPos <= slideXPos === false) {
-                    sliderComplete();
-                }
-                $activeHandle.mouseup();
+        } else {
+            if(handleXPos <= data.slide.XPos === false) {
+                var ev = {
+                    data: data
+                };
+                data.onComplete(ev);
             }
+            data.handle.active.mouseup();
         }
+    };
 
-        function sliderComplete() {
-            $activeHandle.offset({left: slideXPos + slideWidth - handleOWidth});
-            $activeHandle.off();
-            slideOff();
-            $formEl.attr('data-valid', 'true');
-            $slide.addClass('valid');
-            $('.slide-to-captcha').attr('data-content', options.completedText);
+    this.onComplete = function (e) {
+        var data = e.data;
 
+        data.handle.active.offset({left: data.slide.XPos + data.slide.Width - data.handle.OWidth});
+        data.handle.active.off();
+        data.onRelease();
+        data.form.attr('data-valid', 'true');
+        data.slide.obj.addClass('valid');
+        $('.slide-to-captcha').attr('data-content', data.options.completedText);
+    };
 
-        }
+    this.onRelease = function (e) {
+        this.handle.active.removeClass('active-handle');
+    };
 
-        function slideOff() {
-            $activeHandle.removeClass('active-handle');
-        }
-    }
-})(jQuery);
+    // Solo function
+    this.init();
+};
