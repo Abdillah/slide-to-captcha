@@ -1,3 +1,7 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
 .slide-to-captcha {
     background-color: #ddd;
     background-color: #dddddd;
@@ -8,9 +12,9 @@
     border: 2px solid #343434;
     color: #343434;
     font-size: 0.5em;
-    height: calc(40px + 4px);
+    height: 40px;
 
-    padding: 10px 0;
+    padding: 5px 5px;
     position: relative;
     text-align: center;
     -webkit-transition: background-color 0.3s;
@@ -18,7 +22,7 @@
     -ms-transition: background-color 0.3s;
     -o-transition: background-color 0.3s;
     transition: background-color 0.3s;
-    width: 200px;
+    width: 500px;
 }
 
 .slide-to-captcha:after {
@@ -34,10 +38,8 @@
 .slide-to-captcha-handle {
     background: #343434;
     /* border: 2px solid #aaa; */
-    height: 30px;
-    left: 5px;
-    position: absolute;
-    top: 5px;
+    height: 100%;
+    position: relative;
     width: 30px;
 }
 
@@ -60,8 +62,8 @@
 
 .slide-to-captcha.valid .slide-to-captcha-handle {
     background-color: transparent;
-    transform: translateX(10px) rotate(45deg);
-    height: 25px;
+    transform: translate(10px) rotate(45deg);
+    height: 80%;
     border: unset;
     border-bottom: 3px solid #fff;
     border-right: 3px solid #fff;
