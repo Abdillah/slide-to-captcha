@@ -89,6 +89,8 @@ var SliderCaptcha = function(element, options) {
         this.slide.obj.removeClass('slide-to-captcha');
         this.slide.obj.removeClass('valid');
 
+        this.form.input.attr('value', '');
+
         this.handle.obj.css('cursor', 'normal')
             .on('mousedown', null);
 
@@ -142,7 +144,7 @@ var SliderCaptcha = function(element, options) {
         data.slide.obj.addClass('valid');
         data.options.completeHandler(data);
 
-        data.form.input.attr('value', data.options.completedText);
+        data.form.input.attr('value', data.options.authValue);
     };
 
     function defaultCompleteCallback(data) {
