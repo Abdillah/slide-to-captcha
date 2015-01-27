@@ -7,7 +7,7 @@ CAPTCHAs suck. Math problems are exclusionary. Color-based CAPTCHAs stop color-b
 
 Slide to Captcha is a new way to look at CAPTCHA. A user simply slides to unlock the submit functionality of your form (an interaction metaphor they are used to already).
 
-[A REALLY basic example](http://joshbroton.com/projects/slide-to-captcha)
+[Demo and Usage Example](http://abdillah.github.io/slider-captcha/)
 
 ## Slide to CAPTCHA Basics
 
@@ -15,7 +15,7 @@ Slide to Captcha is a new way to look at CAPTCHA. A user simply slides to unlock
     <link href="path/to/slide-to-captcha.css" rel="stylesheet" />
 
 #### Including the Javascript
-    <script src="path/to/slide-to-captcha.js" type="text/javascript"></script>
+    <script src="path/to/slide-to-captcha.js"></script>
 
 #### Recommended HTML Structure
     <form>
@@ -39,27 +39,33 @@ Slide to Captcha is a new way to look at CAPTCHA. A user simply slides to unlock
 
         // Default options
         options = {
-            completedText: 'Done!',   // Value of data-content on success
-            cursor: 'move',           // Cursor type on handle hover
-            customValidation: false,  // Use your own validation function
-            direction: 'x',           // x or y, yet only support x
-            handle: '.handle'         // handle selector
+            authValue: 'Authenticated!',     // Value of hidden input on success
+            cursor: 'move',                  // Cursor type on handle hover
+            customValidation: true,          // Use your own onsubmit= function
+            direction: 'x',                  // x or y, yet only support x
+            handle: '.handle'                // Handle selector
+            inputName: 'captcha',            // Hidden input where to fill the value
+            completeHandler: defaultCompleteHandler  // Function to call when completed
         };
-        captcha = new SliderCaptcha(wrapperElement, {});
+        captcha = new SliderCaptcha(wrapperElement, options);
     });
-
 
 #### Options
     Option              Default
     -----------------------------------------
-    handle:             ".handle"  // Class of handle inside #identifier-of-slidewrapper
-    cursor:             "move"     // The cursor your mouse will use when hovering over handle
-    direction:          "x"        // Can be x or y. Not done with y slide yet.
-    customValidation:   false      // If you write your own validation, choose true
+    authValue:          'Authenticated!',     // Value of hidden input on success
+    handle:             '.handle'  // Class of handle inside #identifier-of-slidewrapper
+    cursor:             'move'     // The cursor your mouse will use when hovering over handle
+    direction:          'x'        // Can be x or y. Not done with y slide yet.
+    customValidation:   true       // If you write your own validation, choose true
+    inputName:          'captcha'               // Hidden input where to fill the success value
+    completeHandler:    defaultCompleteHandler  // Function to call when completed
 
 ## To Do
 * [x] Basic horizontal functionality
-* [ ] More flexible style
+* [x] More flexible style
+* [x] Reset-able captcha
+* [x] Support complete handler
 * [ ] Test in older browsers
 * [ ] More options
 * [ ] PHP authentication mechanism (use key-pair, php apc_store)
