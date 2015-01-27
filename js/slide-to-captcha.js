@@ -18,15 +18,10 @@ var SliderCaptcha = function(element, options) {
         },
         slide: {
             obj: $(element),
-            XPos: 0,
             width: 0,
             oWidth: 0
         },
-        form: 0,
-        mouse: {
-            xPos: 0,
-            yPos: 0
-        }
+        form: 0
     };
 
     // Object data alias : It's a relics, maybe future removed
@@ -34,7 +29,6 @@ var SliderCaptcha = function(element, options) {
     this.handle = this.data.handle;
     this.slide = this.data.slide;
     this.form = this.data.form;
-    this.mouse = this.data.mouse;
 
     this.init = function () {
         // Init data
@@ -102,13 +96,9 @@ var SliderCaptcha = function(element, options) {
 
         data.handle.active = $(this).addClass('active-handle');
 
-        data.mouse.xPos = $(this).offset().left + data.handle.oWidth - e.pageX;
-
         // if(data.options.direction === 'y') {
         //    yPos = handle.offset().top + handleHeight = e.pageY;
         // }
-
-        data.slide.xPos = $(this).parent().offset().left;
 
         data.handle.active.on('mousemove', data, data.onMove)
             .on('mouseup', data, data.onRelease);
