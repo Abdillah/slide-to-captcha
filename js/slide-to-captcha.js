@@ -5,11 +5,13 @@ var SliderCaptcha = function(element, options) {
     // Object Composition
     this.data = {
         options: $.extend({
-            completedText: 'Done!',
+            authValue: 'Authenticated!',
             cursor: 'move',
-            customValidation: false,
+            customValidation: true,
             direction: 'x', //x or y
-            handle: '.handle'
+            handle: '.handle',
+            inputName: 'captcha',
+            completeCallback: defaultCompleteCallback
         }, options),
         handle: {
             obj: 0,
@@ -21,7 +23,10 @@ var SliderCaptcha = function(element, options) {
             width: 0,
             oWidth: 0
         },
-        form: 0
+        form: {
+            obj: 0,
+            input: 0
+        }
     };
 
     // Object data alias : It's a relics, maybe future removed
@@ -64,19 +69,21 @@ var SliderCaptcha = function(element, options) {
         console.log("start %i = %i + (%i - %i) / 2", this.slide.start, this.slide.obj.offset().left, this.slide.oWidth, this.slide.width);
         console.log("end   %i = %i - (%i / 2)", this.slide.end, this.slide.width, this.handle.width);
 
-        this.form = this.slide.obj.parents('form');
-        this.form.attr('data-valid', 'false');
+        this.form.obj = this.slide.obj.parents('form');
 
-        // if(this.options.customValidation === false) {
-        //     form.attr('onsubmit', "return $(this).attr('data-valid') === 'true';");
-        // }
+        this.form.input = $(this.form.obj).find('input[name=' + this.options.inputName + ']');
+
+        if (this.options.customValidation === false) {
+            this.form.obj.attr('data-valid', 'false');
+            this.form.obj.attr('onsubmit', "return $(this).attr('data-valid') === 'true';");
+        }
 
         this.handle.obj.css('cursor', this.options.cursor)
             .on('mousedown', this, this.onDrag);
     };
 
     this.destroy = function () {
-        this.form.removeAttr('data-valid', 'false');
+        this.form.obj.removeAttr('data-valid', 'false');
 
         this.handle.obj.removeClass('slide-to-captcha-handle');
         this.slide.obj.removeClass('slide-to-captcha');
@@ -131,9 +138,16 @@ var SliderCaptcha = function(element, options) {
         data.handle.active.offset({ left: data.slide.end });
         data.handle.active.off();
         data.onRelease();
-        data.form.attr('data-valid', 'true');
+        data.form.obj.attr('data-valid', 'true');
         data.slide.obj.addClass('valid');
-        $('.slide-to-captcha').attr('data-content', data.options.completedText);
+        data.options.completeHandler(data);
+
+        data.form.input.attr('value', data.options.completedText);
+    };
+
+    function defaultCompleteCallback(data) {
+        console.log('Authenticated as human!');
+        $('.slide-to-captcha').attr('data-content', data.options.authValue);
     };
 
     this.onRelease = function (e) {
