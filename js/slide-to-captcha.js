@@ -136,7 +136,7 @@ var SliderCaptcha = function(element, options) {
     this.onComplete = function (e) {
         var data = e.data;
 
-        data.handle.active.offset({left: data.slide.xPos + data.slide.width - data.handle.oWidth});
+        data.handle.active.offset({ left: data.slide.end });
         data.handle.active.off();
         data.onRelease();
         data.form.attr('data-valid', 'true');
