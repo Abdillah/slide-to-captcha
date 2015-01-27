@@ -5,22 +5,22 @@ var SliderCaptcha = function(element, options) {
     // Object Composition
     this.data = {
         options: $.extend({
-            handle: '.handle',
+            completedText: 'Done!',
             cursor: 'move',
-            direction: 'x', //x or y
             customValidation: false,
-            completedText: 'Done!'
+            direction: 'x', //x or y
+            handle: '.handle'
         }, options),
         handle: {
             obj: 0,
             active: 0,
-            OWidth: 0
+            oWidth: 0
         },
         slide: {
             obj: $(element),
             XPos: 0,
-            Width: 0,
-            OWidth: 0
+            width: 0,
+            oWidth: 0
         },
         form: 0,
         mouse: {
@@ -29,7 +29,7 @@ var SliderCaptcha = function(element, options) {
         }
     };
 
-    // Object data alias
+    // Object data alias : It's a relics, maybe future removed
     this.options = this.data.options;
     this.handle = this.data.handle;
     this.slide = this.data.slide;
