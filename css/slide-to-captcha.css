@@ -22,7 +22,7 @@
     -ms-transition: background-color 0.3s;
     -o-transition: background-color 0.3s;
     transition: background-color 0.3s;
-    width: 500px;
+    width: 150px;
 }
 
 .slide-to-captcha:after {
@@ -53,10 +53,12 @@
 }
 
 .slide-to-captcha.valid:after {
-    position: relative;
-    /* content: attr(data-content); */
+    color: #f0f0f0;
+    content: attr(data-content);
     display: block;
-    /* color: rgba(0, 0, 0, 0.6); */
+    font-size: 1em;
+    position: absolute;
+    top: 0;
     z-index: 1;
 }
 
