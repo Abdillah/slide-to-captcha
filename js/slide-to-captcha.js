@@ -77,13 +77,15 @@ var SliderCaptcha = function(element, options) {
 
     this.destroy = function () {
         this.form.removeAttr('data-valid', 'false');
-        this.slide.removeClass('slide-to-captcha');
-        this.handle.removeClass('slide-to-captcha-handle');
 
-        this.handle.css('cursor', 'normal')
+        this.handle.obj.removeClass('slide-to-captcha-handle');
+        this.slide.obj.removeClass('slide-to-captcha');
+        this.slide.obj.removeClass('valid');
+
+        this.handle.obj.css('cursor', 'normal')
             .on('mousedown', null);
 
-        this.handle.active.offset({left: this.slideXPos});
+        this.handle.active.offset({left: 0});
     };
 
     this.reset = function () {
