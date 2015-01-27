@@ -40,12 +40,35 @@ var SliderCaptcha = function(element, options) {
         // Init data
         this.slide.obj = $(element);
         this.slide.obj.addClass('slide-to-captcha');
-        this.slide.Width = this.slide.obj.width();
-        this.slide.OWidth = this.slide.obj.outerWidth();
+        this.slide.width = this.slide.obj.width();
+        this.slide.oWidth = this.slide.obj.outerWidth(true);
+
+        /* Slider Logic
+         *    --------------------
+         *   |   _                |
+         *   |  |_|-------------  |
+         *   |                    |
+         *    --------------------
+         *      |--------------|
+         *
+         * start = slide.left + (slide.oWidth - slide.width) / 2;
+         * end   = (start + )slide.width - handle.width/2
+         *         ^ this practically not necessary, I don't know
+         * handleCenterPos = e.pageX - handle.width/2
+         */
+        this.slide.start = this.slide.obj.offset().left + (this.slide.oWidth - this.slide.width) / 2;
+        this.slide.end = this.slide.width;
 
         this.handle.obj = $(element).find(this.options.handle);
         this.handle.obj.addClass('slide-to-captcha-handle');
-        this.handle.OWidth = this.handle.obj.outerWidth();
+        this.handle.obj.offset({ left: this.slide.start });
+        this.handle.width = this.handle.obj.width();
+        this.handle.oWidth = this.handle.obj.outerWidth();
+        // Substract half of the handle width from the track width
+        this.slide.end = this.slide.end - (this.handle.width / 2);
+
+        console.log("start %i = %i + (%i - %i) / 2", this.slide.start, this.slide.obj.offset().left, this.slide.oWidth, this.slide.width);
+        console.log("end   %i = %i - (%i / 2)", this.slide.end, this.slide.width, this.handle.width);
 
         this.form = this.slide.obj.parents('form');
         this.form.attr('data-valid', 'false');
@@ -79,13 +102,13 @@ var SliderCaptcha = function(element, options) {
 
         data.handle.active = $(this).addClass('active-handle');
 
-        data.mouse.xPos = $(this).offset().left + data.handle.OWidth - e.pageX;
+        data.mouse.xPos = $(this).offset().left + data.handle.oWidth - e.pageX;
 
         // if(data.options.direction === 'y') {
         //    yPos = handle.offset().top + handleHeight = e.pageY;
         // }
 
-        data.slide.XPos = $(this).parent().offset().left + ((data.slide.OWidth - data.slide.Width) / 2);
+        data.slide.xPos = $(this).parent().offset().left;
 
         data.handle.active.on('mousemove', data, data.onMove)
             .on('mouseup', data, data.onRelease);
@@ -95,20 +118,15 @@ var SliderCaptcha = function(element, options) {
 
     this.onMove = function (e) {
         var data = e.data;
-        console.log('%o', data.slide);
-        console.log('%o', data.handle);
 
-        var handleXPos = e.pageX + data.mouse.xPos - data.handle.OWidth;
-        console.log("hand-x : %i", handleXPos);
-        if(handleXPos > data.slide.XPos && handleXPos < (data.slide.XPos + data.slide.Width - data.handle.OWidth)) {
+        var handleXPos = e.pageX - (data.handle.width/2);
+        if(handleXPos > data.slide.start && handleXPos < data.slide.end) {
             if (data.handle.obj.hasClass('active-handle')) {
                 $('.active-handle').offset({left: handleXPos});
             }
         } else {
-            if(handleXPos <= data.slide.XPos === false) {
-                var ev = {
-                    data: data
-                };
+            if(handleXPos >= data.slide.end) {
+                var ev = { data: data };
                 data.onComplete(ev);
             }
             data.handle.active.mouseup();
@@ -118,7 +136,7 @@ var SliderCaptcha = function(element, options) {
     this.onComplete = function (e) {
         var data = e.data;
 
-        data.handle.active.offset({left: data.slide.XPos + data.slide.Width - data.handle.OWidth});
+        data.handle.active.offset({left: data.slide.xPos + data.slide.width - data.handle.oWidth});
         data.handle.active.off();
         data.onRelease();
         data.form.attr('data-valid', 'true');
