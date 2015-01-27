@@ -1,6 +1,7 @@
 Slide to CAPTCHA
 ================
-###A unique way for your users to prove they're human!###
+
+### A unique way for your users to prove they're human!
 
 CAPTCHAs suck. Math problems are exclusionary. Color-based CAPTCHAs stop color-blind people from using your site.
 
@@ -8,41 +9,47 @@ Slide to Captcha is a new way to look at CAPTCHA. A user simply slides to unlock
 
 [A REALLY basic example](http://joshbroton.com/projects/slide-to-captcha)
 
-##Slide to CAPTCHA Basics##
+## Slide to CAPTCHA Basics
 
-####Include the CSS####
+#### Include the CSS
     <link href="path/to/slide-to-captcha.css" rel="stylesheet" />
 
-####Including the Javascript####
+#### Including the Javascript
     <script src="path/to/slide-to-captcha.js" type="text/javascript"></script>
 
-####Recommended HTML Structure####
+#### Recommended HTML Structure
     <form>
-      <!-- ... -->
+      <!-- ... You may copy below structure ... -->
       <div class="captcha">
         <input type="hidden" name="captcha" />
         <div class="handle"></div>
       </div>
-      <!-- ... -->
+      <!-- ... You may copy above structure ... -->
+
+      <!-- ... Permit multiple instance ... -->
+      <div class="captcha1">
+        <input type="hidden" name="captcha1" />
+        <div class="handle1"></div>
+      </div>
     </form>
 
-####Calling Slide to CAPTCHA####
+#### Calling Slide to CAPTCHA
     $(document).ready(function () {
         wrapperElement = '.captcha';
 
         // Default options
         options = {
-            handle: '.handle',        // handle selector
+            completedText: 'Done!',   // Value of data-content on success
             cursor: 'move',           // Cursor type on handle hover
-            direction: 'x',           // x or y
             customValidation: false,  // Use your own validation function
-            completedText: 'Done!'    // Value of data-content on success
+            direction: 'x',           // x or y, yet only support x
+            handle: '.handle'         // handle selector
         };
         captcha = new SliderCaptcha(wrapperElement, {});
-    })
+    });
 
 
-####Options####
+#### Options
     Option              Default
     -----------------------------------------
     handle:             ".handle"  // Class of handle inside #identifier-of-slidewrapper
@@ -50,11 +57,16 @@ Slide to Captcha is a new way to look at CAPTCHA. A user simply slides to unlock
     direction:          "x"        // Can be x or y. Not done with y slide yet.
     customValidation:   false      // If you write your own validation, choose true
 
-##To Do##
-* Test in older browsers
-* More options
-* Vertical slide functionality
+## To Do
+* [x] Basic horizontal functionality
+* [ ] More flexible style
+* [ ] Test in older browsers
+* [ ] More options
+* [ ] PHP authentication mechanism (use key-pair, php apc_store)
+* [ ] Vertical slide functionality
 
-##Done##
-* Basic horizontal functionality
-* Tested in Chrome 30, 32, IE 8/9/10/11 (some styles don't work in 8/9), and Firefox 24
+## Browser Tested
+* Chrome v30, v32
+* IE v8, v9 (some styles don't work in 8/9), v10, v11
+* Firefox v24, v34
+* Opera
