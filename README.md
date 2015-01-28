@@ -43,7 +43,7 @@ Slide to Captcha is a new way to look at CAPTCHA. A user simply slides to unlock
             cursor: 'move',                  // Cursor type on handle hover
             customValidation: true,          // Use your own onsubmit= function
             direction: 'x',                  // x or y, yet only support x
-            handle: '.handle'                // Handle selector
+            handle: '.handle',               // Handle selector
             inputName: 'captcha',            // Hidden input where to fill the value
             completeHandler: defaultCompleteHandler  // Function to call when completed
         };
