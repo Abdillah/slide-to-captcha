@@ -90,6 +90,8 @@ var SliderCaptcha = function(element, options) {
         this.slide.obj.removeClass('slide-to-captcha');
         this.slide.obj.removeClass('valid');
 
+        this.form.input.attr('value', '');
+
         this.handle.obj.css('cursor', 'normal')
             .on('mousedown', null);
 
