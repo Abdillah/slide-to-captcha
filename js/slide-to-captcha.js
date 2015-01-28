@@ -56,7 +56,7 @@ var SliderCaptcha = function(element, options) {
          * handleCenterPos = e.pageX - handle.width/2
          */
         this.slide.start = this.slide.obj.offset().left + (this.slide.oWidth - this.slide.width) / 2;
-        this.slide.end = this.slide.width;
+        this.slide.end = this.slide.start + this.slide.width;
 
         this.handle.obj = $(element).find(this.options.handle);
         this.handle.obj.addClass('slide-to-captcha-handle');
@@ -89,8 +89,6 @@ var SliderCaptcha = function(element, options) {
         this.slide.obj.removeClass('slide-to-captcha');
         this.slide.obj.removeClass('valid');
 
-        this.form.input.attr('value', '');
-
         this.handle.obj.css('cursor', 'normal')
             .on('mousedown', null);
 
@@ -111,8 +109,10 @@ var SliderCaptcha = function(element, options) {
         //    yPos = handle.offset().top + handleHeight = e.pageY;
         // }
 
-        data.handle.active.on('mousemove', data, data.onMove)
-            .on('mouseup', data, data.onRelease);
+        // To avoid calculation error when style doesn't fully loaded,
+        // recalc slider start and end here
+        data.slide.start = data.slide.obj.offset().left + (data.slide.oWidth - data.slide.width) / 2;
+        data.slide.end = data.slide.start + data.slide.width - data.handle.width;
 
         e.preventDefault();
     };
@@ -120,8 +120,11 @@ var SliderCaptcha = function(element, options) {
     this.onMove = function (e) {
         var data = e.data;
 
-        var handleXPos = e.pageX - (data.handle.width/2);
-        if(handleXPos > data.slide.start && handleXPos < data.slide.end) {
+        var handleXPos = e.pageX - (data.handle.width * 6/10);
+        // console.log('pageX: %i', e.pageX);
+        console.log('%i > %i or < %i', handleXPos, data.slide.start, data.slide.end);
+        if(handleXPos >= data.slide.start && handleXPos <= data.slide.end) {
+            // console.log(handleXPos - data.slide.start);
             if (data.handle.obj.hasClass('active-handle')) {
                 $('.active-handle').offset({left: handleXPos});
             }
@@ -144,7 +147,7 @@ var SliderCaptcha = function(element, options) {
         data.slide.obj.addClass('valid');
         data.options.completeHandler(data);
 
-        data.form.input.attr('value', data.options.authValue);
+        data.form.input.attr('value', data.options.completedText);
     };
 
     function defaultCompleteCallback(data) {
