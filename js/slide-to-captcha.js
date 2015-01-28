@@ -66,8 +66,8 @@ var SliderCaptcha = function(element, options) {
         // Substract half of the handle width from the track width
         this.slide.end = this.slide.end - (this.handle.width / 2);
 
-        console.log("start %i = %i + (%i - %i) / 2", this.slide.start, this.slide.obj.offset().left, this.slide.oWidth, this.slide.width);
-        console.log("end   %i = %i - (%i / 2)", this.slide.end, this.slide.width, this.handle.width);
+        // console.log("start %i = %i + (%i - %i) / 2", this.slide.start, this.slide.obj.offset().left, this.slide.oWidth, this.slide.width);
+        // console.log("end   %i = %i - (%i / 2)", this.slide.end, this.slide.width, this.handle.width);
 
         this.form.obj = this.slide.obj.parents('form');
 
@@ -80,6 +80,7 @@ var SliderCaptcha = function(element, options) {
 
         this.handle.obj.css('cursor', this.options.cursor)
             .on('mousedown', this, this.onDrag);
+
     };
 
     this.destroy = function () {
@@ -115,6 +116,7 @@ var SliderCaptcha = function(element, options) {
         data.slide.end = data.slide.start + data.slide.width - data.handle.width;
 
         e.preventDefault();
+
     };
 
     this.onMove = function (e) {
@@ -129,6 +131,7 @@ var SliderCaptcha = function(element, options) {
                 $('.active-handle').offset({left: handleXPos});
             }
         } else {
+            // console.log('%i >= %i ?', handleXPos, data.slide.end);
             if(handleXPos >= data.slide.end) {
                 var ev = { data: data };
                 data.onComplete(ev);
