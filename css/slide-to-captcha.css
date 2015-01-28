@@ -14,6 +14,7 @@
     font-size: 0.5em;
     height: 40px;
 
+    overflow: hidden;
     padding: 5px 5px;
     position: relative;
     text-align: center;
