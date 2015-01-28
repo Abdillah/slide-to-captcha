@@ -108,6 +108,9 @@ var SliderCaptcha = function(element, options) {
 
         data.handle.active = $(this).addClass('active-handle');
 
+        data.handle.obj
+            .on('mousemove', data, data.onMove)
+            .on('mouseup', data, data.onRelease);
         // if(data.options.direction === 'y') {
         //    yPos = handle.offset().top + handleHeight = e.pageY;
         // }
@@ -130,7 +133,7 @@ var SliderCaptcha = function(element, options) {
         if(handleXPos >= data.slide.start && handleXPos <= data.slide.end) {
             // console.log(handleXPos - data.slide.start);
             if (data.handle.obj.hasClass('active-handle')) {
-                $('.active-handle').offset({left: handleXPos});
+                data.handle.active.offset({left: handleXPos});
             }
         } else {
             // console.log('%i >= %i ?', handleXPos, data.slide.end);
@@ -147,12 +150,12 @@ var SliderCaptcha = function(element, options) {
 
         data.handle.active.offset({ left: data.slide.end });
         data.handle.active.off();
-        data.onRelease();
+        data.onRelease(e);
         data.form.obj.attr('data-valid', 'true');
         data.slide.obj.addClass('valid');
-        data.options.completeHandler(data);
+        data.options.completeCallback(data);
 
-        data.form.input.attr('value', data.options.completedText);
+        data.form.input.attr('value', data.options.authValue);
     };
 
     function defaultCompleteCallback(data) {
@@ -161,7 +164,8 @@ var SliderCaptcha = function(element, options) {
     };
 
     this.onRelease = function (e) {
-        this.handle.active.removeClass('active-handle');
+        var data = e.data;
+        data.handle.active.removeClass('active-handle');
     };
 
     // Solo function
