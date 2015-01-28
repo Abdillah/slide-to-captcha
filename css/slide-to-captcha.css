@@ -40,7 +40,12 @@
     /* border: 2px solid #aaa; */
     height: 100%;
     position: relative;
+    transition: 100ms;
     width: 30px;
+}
+
+.slide-to-captcha-handle.active-handle {
+    background: #b43b3b;
 }
 
 .slide-to-captcha-handle:after {
