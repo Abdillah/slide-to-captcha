@@ -10,7 +10,7 @@ var SliderCaptcha = function(element, options) {
             customValidation: true,
             direction: 'x', //x or y
             handle: '.handle',
-            hintText: 'Slide to the right =>',
+            hintText: 'Grab and Slide',
             inputName: 'captcha',
             completeCallback: defaultCompleteCallback
         }, options),
@@ -165,7 +165,7 @@ var SliderCaptcha = function(element, options) {
 
     function defaultCompleteCallback(data) {
         console.log('Authenticated as human!');
-        $('.slide-to-captcha').attr('data-content', data.options.authValue);
+        data.slide.obj.attr('data-content', data.options.authValue);
     };
 
     this.onRelease = function (e) {
