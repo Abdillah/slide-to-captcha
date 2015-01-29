@@ -10,6 +10,7 @@ var SliderCaptcha = function(element, options) {
             customValidation: true,
             direction: 'x', //x or y
             handle: '.handle',
+            hintText: 'Slide to the right =>',
             inputName: 'captcha',
             completeCallback: defaultCompleteCallback
         }, options),
@@ -57,6 +58,9 @@ var SliderCaptcha = function(element, options) {
          */
         this.slide.start = this.slide.obj.offset().left + (this.slide.oWidth - this.slide.width) / 2;
         this.slide.end = this.slide.start + this.slide.width;
+
+        // Show hint
+        $('.slide-to-captcha').attr('data-content', this.options.hintText);
 
         this.handle.obj = $(element).find(this.options.handle);
         this.handle.obj.addClass('slide-to-captcha-handle');
@@ -127,9 +131,10 @@ var SliderCaptcha = function(element, options) {
     this.onMove = function (e) {
         var data = e.data;
 
-        var handleXPos = e.pageX - (data.handle.width * 6/10);
-        // console.log('pageX: %i', e.pageX);
-        console.log('%i > %i or < %i', handleXPos, data.slide.start, data.slide.end);
+        var handleXPos = data.handle.obj.offset().left + (e.pageX - data.handle.obj.offset().left - (data.handle.width / 2));
+
+        console.log('pageX: %i . handle off: %i', e.pageX, data.handle.obj.offset().left);
+        // console.log('%i > %i or < %i', handleXPos, data.slide.start, data.slide.end);
         if(handleXPos >= data.slide.start && handleXPos <= data.slide.end) {
             // console.log(handleXPos - data.slide.start);
             if (data.handle.obj.hasClass('active-handle')) {
